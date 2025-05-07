@@ -1,10 +1,13 @@
 from flask import Flask, send_from_directory
 import csv
+import subprocess
 import os
 
 app = Flask(__name__)
 
-SERVER_ID = os.environ.get('SERVER_ID', 'default') # Get server ID from environment variable
+REMOTE_HOST = 'webserver2@192.168.100.12'
+REMOTE_PATH = '/home/webserver2/netwerken2isb/'
+SERVER_ID = os.environ.get('SERVER_ID', 'default')  # Get server ID from environment variable
 
 COUNTER_FILE = 'shared_counter.csv'
 
@@ -13,6 +16,7 @@ if not os.path.exists(COUNTER_FILE):
     with open(COUNTER_FILE, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['0'])
+
 
 # get_counter() and increment_counter() functions (same as before)
 def get_counter():
@@ -29,6 +33,7 @@ def get_counter():
         print(f"Error reading counter: {e}")
         return 'Error'
 
+
 def increment_counter():
     try:
         current_value = int(get_counter())
@@ -40,33 +45,43 @@ def increment_counter():
     except Exception as e:
         return f"Error incrementing counter: {e}"
 
+
+def sync_counter():
+    try:
+        # Gebruik het absolute pad naar rsync
+        subprocess.run(['/usr/bin/rsync', '-avz', COUNTER_FILE, f'{REMOTE_HOST}:{REMOTE_PATH}'], check=True)
+        print("Counter gesynchroniseerd.")
+    except subprocess.CalledProcessError as e:
+        print(f"Fout tijdens synchronisatie: {e}")
+    except FileNotFoundError:
+        print(f"Bestand niet gevonden: {COUNTER_FILE}")
+
+
 @app.route('/')
 def serve_root():
     folder = 'webserver1' if SERVER_ID == 'server1' else 'webserver2'
     return send_from_directory(folder, 'index.html')
+
 
 @app.route('/<path:filename>')
 def serve_static(filename):
     folder = 'webserver1' if SERVER_ID == 'server1' else 'webserver2'
     return send_from_directory(folder, filename)
 
+
 @app.route('/api/counter', methods=['GET'])
 def read_counter():
     return get_counter()
 
+
 @app.route('/api/counter/increment', methods=['POST'])
 def update_counter():
-    return increment_counter()
-
-#@app.route('/<path:filename>')
-#def serve_static(filename):
-#    if SERVER_ID == 'server1':
-#        return send_from_directory(os.path.join('.', 'webserver1'), filename)
-#    elif SERVER_ID == 'server2':
-#        return send_from_directory(os.path.join('.', 'webserver2'), filename)
-#    else:
-#        # Fallback to root if no ID
-#        return send_from_directory('.', filename)
+    new_value = increment_counter()
+    if not new_value.startswith("Error"):  # Controleer of het incrementeren succesvol was
+        sync_counter()
+        return new_value
+    else:
+        return new_value
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
