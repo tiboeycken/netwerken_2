@@ -58,15 +58,15 @@ def read_counter():
 def update_counter():
     return increment_counter()
 
-@app.route('/<path:filename>')
-def serve_static(filename):
-    if SERVER_ID == 'server1':
-        return send_from_directory(os.path.join('.', 'webserver1'), filename)
-    elif SERVER_ID == 'server2':
-        return send_from_directory(os.path.join('.', 'webserver2'), filename)
-    else:
-        # Fallback to root if no ID
-        return send_from_directory('.', filename)
+#@app.route('/<path:filename>')
+#def serve_static(filename):
+#    if SERVER_ID == 'server1':
+#        return send_from_directory(os.path.join('.', 'webserver1'), filename)
+#    elif SERVER_ID == 'server2':
+#        return send_from_directory(os.path.join('.', 'webserver2'), filename)
+#    else:
+#        # Fallback to root if no ID
+#        return send_from_directory('.', filename)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
