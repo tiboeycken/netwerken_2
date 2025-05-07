@@ -42,12 +42,13 @@ def increment_counter():
 
 @app.route('/')
 def serve_root():
-    if SERVER_ID == 'server1':
-        return send_from_directory(os.path.join('.', 'webserver1'), 'index.html')
-    elif SERVER_ID == 'server2':
-        return send_from_directory(os.path.join('.', 'webserver2'), 'index.html')
-    else:
-        return "Welcome to the Load Balanced Application!" # Default if no ID
+    folder = 'webserver1' if SERVER_ID == 'server1' else 'webserver2'
+    return send_from_directory(folder, 'index.html')
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    folder = 'webserver1' if SERVER_ID == 'server1' else 'webserver2'
+    return send_from_directory(folder, filename)
 
 @app.route('/api/counter', methods=['GET'])
 def read_counter():
@@ -68,4 +69,4 @@ def serve_static(filename):
         return send_from_directory('.', filename)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=5000)
