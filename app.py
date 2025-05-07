@@ -4,6 +4,8 @@ import os
 
 app = Flask(__name__)
 
+SERVER_ID = os.environ.get('SERVER_ID', 'default') # Get server ID from environment variable
+
 COUNTER_FILE = 'shared_counter.csv'
 
 # Initialize counter file (same as before)
@@ -38,6 +40,15 @@ def increment_counter():
     except Exception as e:
         return f"Error incrementing counter: {e}"
 
+@app.route('/')
+def serve_root():
+    if SERVER_ID == 'server1':
+        return send_from_directory(os.path.join('.', 'webserver1'), 'index.html')
+    elif SERVER_ID == 'server2':
+        return send_from_directory(os.path.join('.', 'webserver2'), 'index.html')
+    else:
+        return "Welcome to the Load Balanced Application!" # Default if no ID
+
 @app.route('/api/counter', methods=['GET'])
 def read_counter():
     return get_counter()
@@ -46,21 +57,15 @@ def read_counter():
 def update_counter():
     return increment_counter()
 
-@app.route('/webserver1/')
-def server1_index():
-    return send_from_directory(os.path.join('.', 'webserver1'), 'index.html')
-
-@app.route('/webserver2/')
-def server2_index():
-    return send_from_directory(os.path.join('.', 'webserver2'), 'index.html')
-
-@app.route('/webserver1/<path:filename>')
-def webserver1_static(filename):
-    return send_from_directory(os.path.join('.', 'webserver1'), filename)
-
-@app.route('/webserver2/<path:filename>')
-def webserver2_static(filename):
-    return send_from_directory(os.path.join('.', 'webserver2'), filename)
+@app.route('/<path:filename>')
+def serve_static(filename):
+    if SERVER_ID == 'server1':
+        return send_from_directory(os.path.join('.', 'webserver1'), filename)
+    elif SERVER_ID == 'server2':
+        return send_from_directory(os.path.join('.', 'webserver2'), filename)
+    else:
+        # Fallback to root if no ID
+        return send_from_directory('.', filename)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
