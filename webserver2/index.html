@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Server Two - Shared Counter</title>
+    <link rel="stylesheet" href="style2.css">
+    <style>
+        #counterDisplay {
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 1em;
+            color: #0097a7; /* Different color to distinguish */
+        }
+        #incrementButton { /* Style the button to match server 1 */
+            padding: 0.5em 1em;
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to Web Server Two!</h1>
+</header>
+<main>
+    <p>This server is also displaying and can increment the shared counter.</p>
+    <div id="counterDisplay">Loading...</div>
+    <button id="incrementButton">Increment Counter</button>
+</main>
+<footer>
+    <p>&copy; 2025 My Redundant Web Servers - Server Two</p>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const counterDisplay = document.getElementById('counterDisplay');
+        const incrementButton = document.getElementById('incrementButton');
+
+        async function fetchCounter() {
+            try {
+                const response = await fetch('/api/counter');
+                const data = await response.text();
+                counterDisplay.textContent = `Counter: ${data}`;
+            } catch (error) {
+                console.error('Error fetching counter:', error);
+                counterDisplay.textContent = 'Error loading counter.';
+            }
+        }
+
+        incrementButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/counter/increment', { method: 'POST' });
+                const data = await response.text();
+                console.log('Counter updated by Server Two:', data);
+                fetchCounter(); // Update display after increment
+            } catch (error) {
+                console.error('Error incrementing counter:', error);
+            }
+        });
+
+        fetchCounter(); // Initial load
+        setInterval(fetchCounter, 1000); // Keep it updated
+    });
+</script>
+</body>
+</html>

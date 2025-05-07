@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Server One - Shared Counter</title>
+    <link rel="stylesheet" href="style1.css">
+    <style>
+        #counterDisplay {
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to Web Server One!</h1>
+</header>
+<main>
+    <p>This server is displaying a shared counter.</p>
+    <div id="counterDisplay">Loading...</div>
+    <button id="incrementButton">Increment Counter</button>
+</main>
+<footer>
+    <p>&copy; 2025 My Redundant Web Servers - Server One</p>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const counterDisplay = document.getElementById('counterDisplay');
+        const incrementButton = document.getElementById('incrementButton');
+
+        async function fetchCounter() {
+            try {
+                const response = await fetch('/api/counter');
+                const data = await response.text();
+                counterDisplay.textContent = `Counter: ${data}`;
+            } catch (error) {
+                console.error('Error fetching counter:', error);
+                counterDisplay.textContent = 'Error loading counter.';
+            }
+        }
+
+        incrementButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/counter/increment', { method: 'POST' });
+                const data = await response.text();
+                console.log('Counter updated:', data);
+                fetchCounter(); // Update display after increment
+            } catch (error) {
+                console.error('Error incrementing counter:', error);
+            }
+        });
+
+        fetchCounter(); // Initial load
+        setInterval(fetchCounter, 1000); // Keep it updated
+    });
+</script>
+</body>
+</html>

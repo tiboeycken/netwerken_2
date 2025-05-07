@@ -1,0 +1,41 @@
+/* webserver2/style2.css */
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #e0f7fa; /* A different background color */
+    color: #006064; /* A different text color */
+}
+
+header {
+    background-color: #006064; /* A different header color */
+    color: white;
+    padding: 1em;
+    text-align: center;
+}
+
+main {
+    padding: 1em;
+    background-color: white;
+    border: 1px solid #b2ebf2; /* A different border color */
+    margin-top: 1em;
+}
+
+button {
+    padding: 0.5em 1em;
+    background-color: #00bcd4; /* A different button color */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#counterDisplay {
+    margin-top: 1em;
+    font-weight: bold;
+    color: #0097a7; /* A different message color */
+}
+
+footer {
+    text-align: center;
+    margin-top: 2em;
+    color: #4db6ac; /* A different footer color */
+}
