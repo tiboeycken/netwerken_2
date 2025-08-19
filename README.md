@@ -1,5 +1,5 @@
 # Redundante Server
-Deze repository bevat een handleiding om een (simpele) setup redundante webservers op te zetten met een **load balancer**.
+Deze repository bevat een handleiding voor een (simpele) setup van redundante webservers met een **load balancer**.
 
 ## Voorbereiding
 ### Setup
