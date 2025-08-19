@@ -1,4 +1,6 @@
 # Redundante Server
+Deze repository bevat een handleiding om een (simpele) setup redundante webservers op te zetten met een **load balancer**.
+
 ## Voorbereiding
 ### Setup
 ![Setup image](images/setup.png)
