@@ -1,8 +1,9 @@
 # Redundante Server
 ## Voorbereiding
 ### Setup
-![[Pasted image 20250412212922.png]]
-Maar dan met rsync ipv shared storage
+![Setup image](images/setup.png)
+
+Gebruik makende van rsync in tegenstelling tot Shared Storage
 ### Tools
 - **Host:** eigen laptop
 - **Load Balancer:** VyOS
@@ -84,8 +85,7 @@ Installeer de ISO met
 #### Config
 ```
 install image
-volg wizard
-klaar
+volg installatie wizard
 ```
 
 ### Installatie Ubuntu Webserver 2
@@ -175,7 +175,6 @@ WantedBy=multi-user.target
 - Set up SSH key-based authentication - will allow rsync to transfer files without needing a password
 ```bash
 ssh-keygen -t rsa
-# keep pressing enter
 ```
 **Copy public key to webserver 2**
 ```bash
